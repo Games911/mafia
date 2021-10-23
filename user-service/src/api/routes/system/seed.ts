@@ -1,14 +1,14 @@
 import express from "express";
-import authController from "../../controllers/auth/auth-controller";
+import Seeder from "../../../database/seeds/seeder";
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
     try {
-        const authController = await new authController();
+        const seed = await new Seeder();
+        await seed.start();
         res.status(200).json({
-            message: "Test",
-            test: authController.invoke()
+            result: 'Success'
         });
     } catch(error) {
         res.status(400).json({

@@ -1,9 +1,14 @@
 import http from "http";
 import app from "./app";
+import { port }  from './config/settings';
+import { connect } from './config/dbConnect';
 
 const server = http.createServer(app);
-const port = 8080;
 
 server.listen(port, () => {
-    return console.log(`server is listening on ${port}`);
+    connect()
+        .then(() => {
+            console.log("MongoDb connected");
+        })
+        .catch(err => console.log(err));
 });
