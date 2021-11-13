@@ -1,14 +1,15 @@
 import { Schema, model } from 'mongoose';
-import { IRole } from './role';
-import { IToken } from './token';
+import { Role } from './role';
+import { Token } from './token';
 
 export interface IUser extends Document {
+    _id?:string,
     email: string;
     nickname: string;
     status: string;
     password: string;
-    role: Schema.Types.ObjectId | IRole;
-    token: Schema.Types.ObjectId | IToken;
+    role: Role;
+    token: Token;
     created: Date;
     updated: Date;
 }

@@ -1,10 +1,10 @@
 import { Schema, model } from 'mongoose';
-import { IPermission } from './permission';
+import { Permission } from './permission';
 
 export interface IRole extends Document {
     name: string;
     status: string;
-    permissions: IPermission[];
+    permissions: Permission[];
     created: Date;
     updated: Date;
 }
