@@ -1,0 +1,20 @@
+version: "3.3"
+services:
+  user-service:
+    build:
+      context: ./
+      dockerfile: ${PWD}/user-service/docker/development/Dockerfile
+    ports:
+      - "9999:8080"
+    volumes:
+      - ./user-service:/usr/src/app
+    external_links:
+      - mongo
+    container_name: mafia-user-service
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data:/data/db
+    container_name: mafia-mongo
