@@ -1,12 +1,11 @@
 import express from "express";
-import Seeder from "../../../database/seeds/seeder";
+import * as Seeder from "../../../database/seeds/seeder";
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
     try {
-        const seed = await new Seeder();
-        await seed.start();
+        await Seeder.start();
         res.status(200).json({
             result: 'Success'
         });

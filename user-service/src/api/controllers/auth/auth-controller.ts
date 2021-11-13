@@ -1,8 +1,3 @@
-class authController {
-
-    public invoke(): string {
-        return 'Test works !!!';
-    }
+export const invoke = async (): Promise<string> => {
+    return 'Test works !!!';
 }
-
-export default authController;
