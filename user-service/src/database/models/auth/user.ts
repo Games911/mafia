@@ -28,3 +28,13 @@ const schema = new Schema<IUser>({
 });
 
 export const User = model<IUser>('User', schema);
+
+export const findByNickname = async (nickname: string) => {
+    const user = (await User.find({ nickname: nickname }).limit(1))[0];
+    if (typeof user !== 'undefined') {
+        return user;
+    }
+    throw new Error('User doesn\'t exist');
+}
+
+

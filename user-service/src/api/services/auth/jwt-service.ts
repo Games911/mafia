@@ -1,6 +1,6 @@
 import jwt from 'json-web-token';
 import { User } from '../../../database/models/auth/user';
-const { secret } = require('../../../config/settings');
+import { secret }  from '../../../config/settings';
 
 export const createToken = async (user: User) => {
     const payload = {

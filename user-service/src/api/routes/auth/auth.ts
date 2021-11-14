@@ -4,7 +4,6 @@ import { User } from '../../../database/models/auth/user';
 const router = express.Router();
 
 router.post('/signup', async (req, res) => {
-    console.log(req.body);
     try {
         const user: User = await AuthController.signup(req.body.email, req.body.nickname, req.body.password);
         res.status(201).json({
@@ -13,6 +12,20 @@ router.post('/signup', async (req, res) => {
     } catch(error) {
         res.status(400).json({
             message: error.message
+        });
+    }
+});
+
+router.post('/signin', async (req, res) => {
+    try {
+        const user = await AuthController.loginUser(req.body.nickname, req.body.password);
+        res.status(201).json({
+            response: {token: user.token.hash}
+        });
+    } catch(error) {
+        res.status(400).json({
+            message: error.message,
+            errors: error.errors
         });
     }
 });

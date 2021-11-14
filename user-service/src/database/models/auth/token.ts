@@ -15,3 +15,7 @@ const schema = new Schema<IToken>({
 });
 
 export const Token = model<IToken>('Token', schema);
+
+export const removeTokenEntry = async (id: string) => {
+    await Token.findByIdAndRemove(id);
+}
