@@ -1,20 +1,7 @@
 import { Schema, model } from 'mongoose';
-import { Role } from './role';
-import { Token } from './token';
+import { User } from '../../interfaces/user/user';
 
-export interface IUser extends Document {
-    _id?:string,
-    email: string;
-    nickname: string;
-    status: string;
-    password: string;
-    role: Role;
-    token: Token;
-    created: Date;
-    updated: Date;
-}
-
-const schema = new Schema<IUser>({
+const schema = new Schema<User>({
     email: { type: String, required: true, unique: true, max: 100},
     nickname: { type: String, required: true, unique: true, max: 50},
     status: { type: String, required: true, max: 20 },
@@ -27,10 +14,10 @@ const schema = new Schema<IUser>({
     versionKey: false
 });
 
-export const User = model<IUser>('User', schema);
+export const UserModel = model<User>('User', schema);
 
 export const findByNickname = async (nickname: string) => {
-    const user = (await User.find({ nickname: nickname }).limit(1))[0];
+    const user = (await UserModel.find({ nickname: nickname }).limit(1))[0];
     if (typeof user !== 'undefined') {
         return user;
     }

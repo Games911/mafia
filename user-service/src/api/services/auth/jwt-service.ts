@@ -1,5 +1,5 @@
 import jwt from 'json-web-token';
-import { User } from '../../../database/models/auth/user';
+import { User } from '../../../database/interfaces/user/user';
 import { secret }  from '../../../config/settings';
 
 export const createToken = async (user: User) => {

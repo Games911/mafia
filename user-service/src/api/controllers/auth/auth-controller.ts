@@ -1,21 +1,23 @@
 import * as PasswordService from '../../services/password-service';
 import * as JwtService from '../../services/auth/jwt-service';
-import { User, findByNickname } from '../../../database/models/auth/user';
+import { UserModel, findByNickname } from '../../../database/models/user/user-model';
 import { Status } from '../../../database/enums/status';
-import { Token, removeTokenEntry } from '../../../database/models/auth/token';
+import { TokenModel, removeTokenEntry } from '../../../database/models/user/token-model';
+import { User } from '../../../database/interfaces/user/user';
 
 export const signup = async (email, nickname, password): Promise<User> => {
     const passwordHash = await PasswordService.hashPassword(password);
-    const user: User = await User.create({
+    const userContract: User = {
         email: email,
         nickname: nickname,
         password: passwordHash,
         status: Status.NEW,
         created: new Date(),
         updated: new Date(),
-    });
+    };
+    const user = await UserModel.create(userContract);
     const tokenHash = await JwtService.createToken(user);
-    user.token = await Token.create({hash: tokenHash, status: Status.ACTIVE});
+    user.token = await TokenModel.create({hash: tokenHash, status: Status.ACTIVE});
     await user.updateOne(user);
     return user;
 }
@@ -29,7 +31,7 @@ export const loginUser = async (nickname, password): Promise<User> => {
             await removeTokenEntry(user.token);
         }
 
-        user.token = await Token.create({hash: tokenHash, status: Status.ACTIVE});
+        user.token = await TokenModel.create({hash: tokenHash, status: Status.ACTIVE});
         await user.updateOne(user);
         return user;
     }

@@ -1,12 +1,7 @@
 import { Schema, model } from 'mongoose';
+import { Token } from '../../interfaces/user/token';
 
-export interface IToken extends Document {
-    hash: string;
-    status: string;
-    expired: Date;
-}
-
-const schema = new Schema<IToken>({
+const schema = new Schema<Token>({
     hash: { type: String, required: true, max: 255},
     status: { type: String, required: true, max: 20 },
     expired: { type: Date, required: false },
@@ -14,8 +9,8 @@ const schema = new Schema<IToken>({
     versionKey: false
 });
 
-export const Token = model<IToken>('Token', schema);
+export const TokenModel = model<Token>('Token', schema);
 
 export const removeTokenEntry = async (id: string) => {
-    await Token.findByIdAndRemove(id);
+    await TokenModel.findByIdAndRemove(id);
 }

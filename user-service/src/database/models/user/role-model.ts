@@ -1,15 +1,7 @@
 import { Schema, model } from 'mongoose';
-import { Permission } from './permission';
+import { Role } from '../../interfaces/user/role';
 
-export interface IRole extends Document {
-    name: string;
-    status: string;
-    permissions: Permission[];
-    created: Date;
-    updated: Date;
-}
-
-const schema = new Schema<IRole>({
+const schema = new Schema<Role>({
     name: { type: String, required: true, unique: true, max: 50},
     status: { type: String, required: true, max: 20},
     permissions: [{ type: Schema.Types.ObjectId, ref: 'Permission' }],
@@ -19,4 +11,4 @@ const schema = new Schema<IRole>({
     versionKey: false
 });
 
-export const Role = model<IRole>('Role', schema);
+export const RoleModel = model<Role>('Role', schema);
