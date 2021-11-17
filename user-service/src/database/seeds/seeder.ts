@@ -5,7 +5,6 @@ import { UserModel } from '../models/user/user-model';
 import { Token } from '../interfaces/user/token';
 import { Permission } from '../interfaces/user/permission';
 import { Role } from '../interfaces/user/role';
-import { User } from '../interfaces/user/user';
 import * as PasswordService  from '../../api/services/password-service';
 import { Status } from '../enums/status';
 
