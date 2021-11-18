@@ -1,9 +1,9 @@
-import express from "express";
-import * as Seeder from "../../../database/seeds/seeder";
+import express from 'express';
+import * as Seeder from '../../../database/seeds/seeder';
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         await Seeder.start();
         res.status(200).json({
