@@ -7,7 +7,8 @@ router.post('/signup', async (req, res) => {
     try {
         const user: User = await AuthController.signup(req.body.email, req.body.nickname, req.body.password);
         res.status(201).json({
-            response: {token: user.token.hash, id: user._id}
+            token: user.token.hash,
+            id: user._id
         });
     } catch(error) {
         res.status(400).json({
@@ -19,8 +20,8 @@ router.post('/signup', async (req, res) => {
 router.post('/signin', async (req, res) => {
     try {
         const user = await AuthController.loginUser(req.body.nickname, req.body.password);
-        res.status(201).json({
-            response: {token: user.token.hash}
+        res.status(200).json({
+            token: user.token.hash
         });
     } catch(error) {
         res.status(400).json({
