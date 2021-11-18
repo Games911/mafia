@@ -25,4 +25,5 @@ docker-pull:
 ### sudo systemctl start docker
 
 ### docker-compose run --rm user-service sh
+### docker-compose run --rm game-service sh
 ### docker-compose run --rm client sh

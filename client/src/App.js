@@ -10,6 +10,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import GuardedRoute from './guards/GuardedRoute';
 import { getToken } from './redux/actions/auth/tokenAction';
 
+import {io} from "socket.io-client";
+const socket = io("http://localhost:8888");
+socket.on("connect", () => {
+    console.log(socket.id);
+});
 
 function App() {
     const dispatch = useDispatch();
@@ -27,7 +32,7 @@ function App() {
                 <Row>
                     <Col>
                         <Switch>
-                            <GuardedRoute path='/cabinet' component={HomeCabinet} auth={token} />
+                            <GuardedRoute path='/cabinet' component={HomeCabinet} auth={token} socket={socket} />
                             <Route path="/signin">
                                 <Signin />
                             </Route>
