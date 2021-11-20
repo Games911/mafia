@@ -1,5 +1,13 @@
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
+import { port }  from './config/settings';
+import { connect } from './config/dbConnect';
+import {Status} from './database/enums/status';
+import {GameModel} from "./database/models/game/game-model";
+import {Game} from "./database/interfaces/game/game";
+import {Player} from "./database/interfaces/game/player";
+import {PlayerModel} from "./database/models/game/player-model";
+import {Roles} from "./database/enums/roles";
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
@@ -9,45 +17,43 @@ const io = new Server(httpServer, {
     }
 });
 
-const roomId = '911';
-
-const getUsers = (io) => {
-    const rooms = io.of("/").adapter.rooms;
-    return rooms.get(roomId);
-}
-
-const sleep = (m) => {
-    return new Promise(r => setTimeout(r, m));
-}
-
 io.on("connection", (socket: Socket) => {
-    socket.on("add-user", async (data) => {
-        socket.join(roomId);
-        const usersIds = getUsers(io);
-
-        if (usersIds.size > 1) {
-            for (let i = 1; i <= 3; i++) {
-                const usersIds = getUsers(io);
-                for (let user of usersIds) {
-                    io.to(user).emit('game-process', {action: 'First', user: user, iterate: i });
-                }
-                await sleep(9000);
-            }
-            for (let i = 1; i <= 3; i++) {
-                const usersIds = getUsers(io);
-                for (let user of usersIds) {
-                    io.to(user).emit('game-process', {action: 'Second', user: user, iterate: i});
-                }
-                await sleep(9000);
-            }
-        } else {
-            for (let user of usersIds) {
-                io.to(user).emit('user-event', {usersCount: usersIds.size});
-            }
+    socket.on("create-game", async (data) => {
+        try {
+            const player: Player = await PlayerModel.create({
+                number: 1,
+                user: data.user,
+                role: Roles.P,
+                status: Status.ACTIVE,
+                created: new Date(),
+                updated: new Date(),
+            });
+            const game: Game = await GameModel.create({
+                name: data.name,
+                status: Status.ACTIVE,
+                players: [player],
+                created: new Date(),
+                updated: new Date(),
+            });
+            socket.emit("on-created-game", {game: game, status: 201});
+        } catch(error) {
+            socket.emit("on-created-game", {error: error, status: 400});
         }
+    });
+
+    socket.on("get-rooms", async (data) => {
+
     });
 });
 
-httpServer.listen(8080);
+
+httpServer.listen(port, () => {
+    connect()
+        .then(() => {
+            console.log("MongoDb connected");
+        })
+        .catch(err => console.log(err));
+});
+
 
 

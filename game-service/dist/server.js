@@ -11,6 +11,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const http_1 = require("http");
 const socket_io_1 = require("socket.io");
+const settings_1 = require("./config/settings");
+const dbConnect_1 = require("./config/dbConnect");
+const status_1 = require("./database/enums/status");
+const game_model_1 = require("./database/models/game/game-model");
+const player_model_1 = require("./database/models/game/player-model");
+const roles_1 = require("./database/enums/roles");
 const httpServer = (0, http_1.createServer)();
 const io = new socket_io_1.Server(httpServer, {
     cors: {
@@ -18,40 +24,38 @@ const io = new socket_io_1.Server(httpServer, {
         methods: ["GET", "POST"]
     }
 });
-const roomId = '911';
-const getUsers = (io) => {
-    const rooms = io.of("/").adapter.rooms;
-    return rooms.get(roomId);
-};
-const sleep = (m) => {
-    return new Promise(r => setTimeout(r, m));
-};
 io.on("connection", (socket) => {
-    socket.on("add-user", (data) => __awaiter(void 0, void 0, void 0, function* () {
-        socket.join(roomId);
-        const usersIds = getUsers(io);
-        if (usersIds.size > 1) {
-            for (let i = 1; i <= 3; i++) {
-                const usersIds = getUsers(io);
-                for (let user of usersIds) {
-                    io.to(user).emit('game-process', { action: 'First', user: user, iterate: i });
-                }
-                yield sleep(9000);
-            }
-            for (let i = 1; i <= 3; i++) {
-                const usersIds = getUsers(io);
-                for (let user of usersIds) {
-                    io.to(user).emit('game-process', { action: 'Second', user: user, iterate: i });
-                }
-                yield sleep(9000);
-            }
+    socket.on("create-game", (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const player = yield player_model_1.PlayerModel.create({
+                number: 1,
+                user: data.user,
+                role: roles_1.Roles.P,
+                status: status_1.Status.ACTIVE,
+                created: new Date(),
+                updated: new Date(),
+            });
+            const game = yield game_model_1.GameModel.create({
+                name: data.name,
+                status: status_1.Status.ACTIVE,
+                players: [player],
+                created: new Date(),
+                updated: new Date(),
+            });
+            socket.emit("on-created-game", { game: game, status: 201 });
         }
-        else {
-            for (let user of usersIds) {
-                io.to(user).emit('user-event', { usersCount: usersIds.size });
-            }
+        catch (error) {
+            socket.emit("on-created-game", { error: error, status: 400 });
         }
     }));
+    socket.on("get-rooms", (data) => __awaiter(void 0, void 0, void 0, function* () {
+    }));
 });
-httpServer.listen(8080);
+httpServer.listen(settings_1.port, () => {
+    (0, dbConnect_1.connect)()
+        .then(() => {
+        console.log("MongoDb connected");
+    })
+        .catch(err => console.log(err));
+});
 //# sourceMappingURL=server.js.map

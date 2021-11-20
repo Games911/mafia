@@ -14,14 +14,14 @@ services:
   game-service:
     build:
       context: ./
-      dockerfile: ${PWD}/game-service/docker/development/Dockerfile
+      dockerfile: ${PWD}/room-service/docker/development/Dockerfile
     ports:
       - "8888:8080"
     volumes:
-      - ./game-service:/usr/src/app
+      - ./room-service:/usr/src/app
     external_links:
       - mongo
-    container_name: mafia-game-service
+    container_name: mafia-room-service
   mongo:
     image: mongo
     ports:

@@ -9,8 +9,11 @@ import { Container, Row, Col } from 'bootstrap-4-react';
 import { useDispatch, useSelector } from 'react-redux';
 import GuardedRoute from './guards/GuardedRoute';
 import { getToken } from './redux/actions/auth/tokenAction';
+import { io } from 'socket.io-client';
+import CreateGame from './components/cabinet/create-game/create-game';
+import Game from "./components/cabinet/game/game";
 
-import {io} from "socket.io-client";
+
 const socket = io("http://localhost:8888");
 socket.on("connect", () => {
     console.log(socket.id);
@@ -32,6 +35,8 @@ function App() {
                 <Row>
                     <Col>
                         <Switch>
+                            <GuardedRoute path='/cabinet/game/:id' component={Game} auth={token} socket={socket} />
+                            <GuardedRoute path='/cabinet/create-game' component={CreateGame} auth={token} socket={socket} />
                             <GuardedRoute path='/cabinet' component={HomeCabinet} auth={token} socket={socket} />
                             <Route path="/signin">
                                 <Signin />
