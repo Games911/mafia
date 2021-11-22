@@ -1,0 +1,3 @@
+export const GAME_SET_GAMES = 'GAME_SET_GAMES';
+export const GAME_SET_VISIBLE_GAMES = 'GAME_SET_VISIBLE_GAMES';
+export const GAME_SET_STEP = 'GAME_SET_STEP';

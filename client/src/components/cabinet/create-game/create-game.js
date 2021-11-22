@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import { Form, Button, Breadcrumb } from 'bootstrap-4-react';
 import * as types from "../../../redux/types/game/create-game-type";
-import {createRoom, nameValidate} from "../../../redux/actions/game/create-game-action";
+import {createGame, nameValidate} from "../../../redux/actions/game/create-game-action";
 import {useDispatch, useSelector} from "react-redux";
 import {getUserData} from "../../../redux/actions/auth/userInfoAction";
 import {Link, useHistory} from "react-router-dom";
@@ -18,7 +18,7 @@ const CreateGame = (props) => {
         apiErrorMessage
     } = useSelector(state => state.createGameReducer);
     const { userId } = useSelector(state => state.userInfoReducer);
-    const {token} = useSelector(state => state.token);
+    const { token } = useSelector(state => state.token);
 
     useEffect(() => {
         dispatch(getUserData());
@@ -36,7 +36,7 @@ const CreateGame = (props) => {
 
     const onSubmit = (event) => {
         event.preventDefault();
-        dispatch(createRoom(name, userId, token, props.socket));
+        dispatch(createGame(name, userId, token, props.socket));
         dispatch({
             type: types.CREATE_GAME_RESET_FORM
         });

@@ -4,8 +4,8 @@ exports.RoundModel = void 0;
 const mongoose_1 = require("mongoose");
 const schema = new mongoose_1.Schema({
     number: { type: Number, required: true, default: 1 },
-    status: { type: String, required: true, max: 20 },
     speaker: { type: Number, required: true, default: 1 },
+    status: { type: String, required: true, max: 20 },
     created: { type: Date, required: false },
     updated: { type: Date, required: false }
 }, {

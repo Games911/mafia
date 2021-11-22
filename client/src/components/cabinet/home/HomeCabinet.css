@@ -1,0 +1,35 @@
+.games-list a:hover{
+    text-decoration: none;
+}
+.games-list h1 {
+    margin-bottom: 20px;
+}
+.games-list h5 {
+    color: #333;
+}
+.games-list .card {
+    margin-bottom: 40px;
+    border: 2px solid #6d4f9b;
+}
+.games-list .room-link-active {
+    cursor: pointer;
+}
+.games-list .room-user-active .card{
+    border: 2px solid #09c;
+}
+
+.games-list-block {
+    margin-top: 20px;
+}
+
+.link-create-game {
+    padding: 10px 20px;
+    border: 2px solid #6d4f9b;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    color: #6d4f9b;
+}
+.link-create-game:hover {
+    background: #6d4f9b;
+    color: #fff;
+}

@@ -20,7 +20,7 @@ export const nameValidate = (value) =>async dispatch=>{
     });
 };
 
-export const createRoom = (name, userId, token, socket) =>async dispatch=>{
+export const createGame = (name, userId, token, socket) =>async dispatch=>{
     socket.emit('create-game', {token: token, name: name, user: userId});
     socket.on("on-created-game", (response) => {
         console.log(response);

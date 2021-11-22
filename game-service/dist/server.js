@@ -13,10 +13,7 @@ const http_1 = require("http");
 const socket_io_1 = require("socket.io");
 const settings_1 = require("./config/settings");
 const dbConnect_1 = require("./config/dbConnect");
-const status_1 = require("./database/enums/status");
-const game_model_1 = require("./database/models/game/game-model");
-const player_model_1 = require("./database/models/game/player-model");
-const roles_1 = require("./database/enums/roles");
+const game_controller_1 = require("./api/controllers/game/game-controller");
 const httpServer = (0, http_1.createServer)();
 const io = new socket_io_1.Server(httpServer, {
     cors: {
@@ -27,28 +24,21 @@ const io = new socket_io_1.Server(httpServer, {
 io.on("connection", (socket) => {
     socket.on("create-game", (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const player = yield player_model_1.PlayerModel.create({
-                number: 1,
-                user: data.user,
-                role: roles_1.Roles.P,
-                status: status_1.Status.ACTIVE,
-                created: new Date(),
-                updated: new Date(),
-            });
-            const game = yield game_model_1.GameModel.create({
-                name: data.name,
-                status: status_1.Status.ACTIVE,
-                players: [player],
-                created: new Date(),
-                updated: new Date(),
-            });
+            const game = yield (0, game_controller_1.createGame)(data.name, data.user);
             socket.emit("on-created-game", { game: game, status: 201 });
         }
         catch (error) {
             socket.emit("on-created-game", { error: error, status: 400 });
         }
     }));
-    socket.on("get-rooms", (data) => __awaiter(void 0, void 0, void 0, function* () {
+    socket.on("get-games", (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const games = yield (0, game_controller_1.getGames)();
+            socket.emit("on-get-games", { games: games, status: 201 });
+        }
+        catch (error) {
+            socket.emit("on-get-games", { error: error, status: 400 });
+        }
     }));
 });
 httpServer.listen(settings_1.port, () => {
