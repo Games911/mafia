@@ -41,7 +41,7 @@ const seedData = () => __awaiter(void 0, void 0, void 0, function* () {
     });
     yield game_model_1.GameModel.create({
         name: 'Game 1',
-        players: [player1],
+        players: [],
         rounds: [round],
         status: status_1.Status.ACTIVE,
         created: new Date(),

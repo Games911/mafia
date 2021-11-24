@@ -5,3 +5,4 @@ dotenv.config();
 export const port =  process.env.PORT;
 export const host =  process.env.HOST;
 export const mongoUrl =  process.env.MONGO_URL;
+export const userCount =  process.env.USER_COUNT;

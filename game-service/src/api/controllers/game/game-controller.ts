@@ -34,6 +34,29 @@ export const createGame = async (name: string, user: string): Promise<Game> => {
     });
 };
 
+export const addUser = async (gameId: string, userId: string): Promise<Game> => {
+    const game = (await GameModel.find({ _id: gameId }).limit(1))[0];
+    const playerUser = (await PlayerModel.find({ user: userId }).limit(1));
+
+    if (playerUser.length) {
+        const isPlayerInGame = game.players.filter(element => String(element._id) === String(playerUser[0]._id));
+        if (isPlayerInGame.length > 0) {
+            return game;
+        }
+    } else {
+        const player: Player = await PlayerModel.create({
+            number: 1,
+            user: userId,
+            role: Roles.P,
+            status: Status.ACTIVE,
+            created: new Date(),
+            updated: new Date(),
+        });
+        game.players.push(player);
+        await game.updateOne(game);
+    }
+    return game;
+}
 
 export const getGames = async () => {
     return GameModel.find({}).populate('players').populate('rounds');

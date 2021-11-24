@@ -2,13 +2,14 @@ import React, { useEffect } from 'react';
 import './HomeCabinet.css';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getGames, seedDataAction } from '../../../redux/actions/game/game.action';
+import { getGames, seedDataAction, addUser } from '../../../redux/actions/game/game.action';
 import { Card, Button } from 'bootstrap-4-react';
 import * as types from '../../../redux/types/game/game-type';
 
 const HomeCabinet = (props) => {
     const dispatch = useDispatch();
     const { games, visibleGames, step, perPage } = useSelector(state => state.gameReducer);
+    const { userId } = useSelector(state => state.userInfoReducer);
 
     useEffect(() => {
         dispatch(getGames(props.socket, perPage));
@@ -29,6 +30,10 @@ const HomeCabinet = (props) => {
         dispatch(seedDataAction(props.socket));
     }
 
+    const addUserToRoom = (gameId) => {
+        dispatch(addUser(gameId, userId, props.socket));
+    };
+
     return (
         <div className="games-list">
             <h1>Home Cabinet</h1>
@@ -38,7 +43,7 @@ const HomeCabinet = (props) => {
             {visibleGames && visibleGames.length > 0 ? (
                 <div className="games-list-block">
                     {visibleGames.map(item => (
-                        <div key={item.name}>
+                        <div key={item._id} onClick={() => addUserToRoom(item._id)}>
                             <Card text="center">
                                 <Card.Header>{item.status}</Card.Header>
                                 <Card.Body>

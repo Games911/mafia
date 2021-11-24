@@ -36,7 +36,7 @@ export const seedData = async () => {
 
     await GameModel.create({
         name: 'Game 1',
-        players: [player1],
+        players: [],
         rounds: [round],
         status: Status.ACTIVE,
         created: new Date(),

@@ -5,7 +5,7 @@ export const getGames = (socket, perPage) => async dispatch => {
     socket.on("on-get-games", (response) => {
         console.log(response.games);
         switch (response.status) {
-            case 201:
+            case 200:
                 const games = response.games;
                 dispatch({
                     type: types.GAME_SET_GAMES,
@@ -27,12 +27,27 @@ export const getGames = (socket, perPage) => async dispatch => {
     });
 }
 
+export const addUser = (gameId, userId, socket) => async dispatch => {
+    socket.emit('add-user', {game: gameId, user: userId});
+    socket.on("on-add-user", (response) => {
+        console.log(response);
+        switch (response.status) {
+            case 200:
+
+                break;
+            case 400:
+                console.log(response.error);
+                break;
+        }
+    });
+}
+
 export const seedDataAction = (socket) => async dispatch => {
     socket.emit('seed-data');
     socket.on("on-seed-data", (response) => {
         console.log(response.games);
         switch (response.status) {
-            case 201:
+            case 200:
 
                 break;
             case 400:
