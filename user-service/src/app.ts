@@ -19,7 +19,7 @@ app.use(function(req, res, next) {
 // Cors
 
 app.get('/', (req, res) => {
-    res.send('API works !!!');
+    res.send('User Service works !!!');
 });
 
 app.use('/auth', auth);
