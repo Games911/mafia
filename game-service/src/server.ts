@@ -4,6 +4,7 @@ import { port }  from './config/settings';
 import { connect } from './config/dbConnect';
 import { Game } from './database/interfaces/game/game';
 import { createGame, getGames } from './api/controllers/game/game-controller';
+import { seedData, removeData } from './api/controllers/seed/seed-controller';
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
@@ -29,6 +30,16 @@ io.on("connection", (socket: Socket) => {
             socket.emit("on-get-games", {games: games, status: 201});
         } catch(error) {
             socket.emit("on-get-games", {error: error, status: 400});
+        }
+    });
+
+    socket.on("seed-data", async (data) => {
+        try {
+            await removeData();
+            await seedData();
+            socket.emit("on-seed-data", {status: 201});
+        } catch(error) {
+            socket.emit("on-seed-data", {error: error, status: 400});
         }
     });
 });

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import './HomeCabinet.css';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getGames } from '../../../redux/actions/game/game.action';
+import { getGames, seedDataAction } from '../../../redux/actions/game/game.action';
 import { Card, Button } from 'bootstrap-4-react';
 import * as types from '../../../redux/types/game/game-type';
 
@@ -25,10 +25,15 @@ const HomeCabinet = (props) => {
         });
     };
 
+    const seedData = () => {
+        dispatch(seedDataAction(props.socket));
+    }
+
     return (
         <div className="games-list">
             <h1>Home Cabinet</h1>
             <Link to="/cabinet/create-game" className="link-create-game">Create game</Link>
+            <Button className="seed" primary onClick={seedData}>Seed data</Button>
 
             {visibleGames && visibleGames.length > 0 ? (
                 <div className="games-list-block">

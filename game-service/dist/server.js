@@ -14,6 +14,7 @@ const socket_io_1 = require("socket.io");
 const settings_1 = require("./config/settings");
 const dbConnect_1 = require("./config/dbConnect");
 const game_controller_1 = require("./api/controllers/game/game-controller");
+const seed_controller_1 = require("./api/controllers/seed/seed-controller");
 const httpServer = (0, http_1.createServer)();
 const io = new socket_io_1.Server(httpServer, {
     cors: {
@@ -38,6 +39,16 @@ io.on("connection", (socket) => {
         }
         catch (error) {
             socket.emit("on-get-games", { error: error, status: 400 });
+        }
+    }));
+    socket.on("seed-data", (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            yield (0, seed_controller_1.removeData)();
+            yield (0, seed_controller_1.seedData)();
+            socket.emit("on-seed-data", { status: 201 });
+        }
+        catch (error) {
+            socket.emit("on-seed-data", { error: error, status: 400 });
         }
     }));
 });

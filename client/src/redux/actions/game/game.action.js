@@ -26,3 +26,18 @@ export const getGames = (socket, perPage) => async dispatch => {
         }
     });
 }
+
+export const seedDataAction = (socket) => async dispatch => {
+    socket.emit('seed-data');
+    socket.on("on-seed-data", (response) => {
+        console.log(response.games);
+        switch (response.status) {
+            case 201:
+
+                break;
+            case 400:
+                console.log(response.error);
+                break;
+        }
+    });
+};

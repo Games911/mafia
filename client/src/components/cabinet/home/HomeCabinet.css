@@ -22,6 +22,12 @@
     margin-top: 20px;
 }
 
+.seed {
+    margin-left: 20px;
+    padding: 8px 20px;
+    margin-bottom: 2px;
+}
+
 .link-create-game {
     padding: 10px 20px;
     border: 2px solid #6d4f9b;
