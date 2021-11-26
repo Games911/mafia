@@ -15,6 +15,8 @@ const roles_1 = require("../../../database/enums/roles");
 const status_1 = require("../../../database/enums/status");
 const game_model_1 = require("../../../database/models/game/game-model");
 const round_model_1 = require("../../../database/models/game/round-model");
+const game_repository_1 = require("../../repositories/game/game-repository");
+const player_repositiry_1 = require("../../repositories/game/player-repositiry");
 const createGame = (name, user) => __awaiter(void 0, void 0, void 0, function* () {
     const player = yield player_model_1.PlayerModel.create({
         number: 1,
@@ -42,10 +44,10 @@ const createGame = (name, user) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.createGame = createGame;
 const addUser = (gameId, userId) => __awaiter(void 0, void 0, void 0, function* () {
-    const game = (yield game_model_1.GameModel.find({ _id: gameId }).limit(1))[0];
-    const playerUser = (yield player_model_1.PlayerModel.find({ user: userId }).limit(1));
-    if (playerUser.length) {
-        const isPlayerInGame = game.players.filter(element => String(element._id) === String(playerUser[0]._id));
+    const game = (yield (0, game_repository_1.getGameById)(gameId))[0];
+    const playerUser = (yield (0, player_repositiry_1.getPlayerByUserId)(userId))[0];
+    if (typeof playerUser !== 'undefined') {
+        const isPlayerInGame = game.players.filter(element => String(element._id) === String(playerUser._id));
         if (isPlayerInGame.length > 0) {
             return game;
         }
@@ -60,13 +62,16 @@ const addUser = (gameId, userId) => __awaiter(void 0, void 0, void 0, function* 
             updated: new Date(),
         });
         game.players.push(player);
+        if (game.players.length === 2) {
+            game.status = status_1.Status.BUSY;
+        }
         yield game.updateOne(game);
     }
     return game;
 });
 exports.addUser = addUser;
 const getGames = () => __awaiter(void 0, void 0, void 0, function* () {
-    return game_model_1.GameModel.find({}).populate('players').populate('rounds');
+    return yield (0, game_repository_1.getGamesAll)();
 });
 exports.getGames = getGames;
 //# sourceMappingURL=game-controller.js.map

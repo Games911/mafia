@@ -7,10 +7,6 @@
 .games-list h5 {
     color: #333;
 }
-.games-list .card {
-    margin-bottom: 40px;
-    border: 2px solid #6d4f9b;
-}
 .games-list .room-link-active {
     cursor: pointer;
 }
@@ -20,6 +16,19 @@
 
 .games-list-block {
     margin-top: 20px;
+}
+
+.games-list-active {
+    cursor: pointer;
+    border: 2px solid #6d4f9b;
+    margin-bottom: 40px;
+}
+
+.games-list-disabled {
+    cursor: none;
+    pointer-events: none;
+    margin-bottom: 40px;
+    border: 2px solid #c0b9c0;
 }
 
 .seed {

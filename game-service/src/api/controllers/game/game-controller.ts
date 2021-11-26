@@ -6,6 +6,8 @@ import { Game } from '../../../database/interfaces/game/game';
 import { GameModel } from '../../../database/models/game/game-model';
 import { Round } from '../../../database/interfaces/game/round';
 import { RoundModel } from '../../../database/models/game/round-model';
+import { getGameById, getGamesAll } from '../../repositories/game/game-repository';
+import { getPlayerByUserId } from '../../repositories/game/player-repositiry';
 
 
 export const createGame = async (name: string, user: string): Promise<Game> => {
@@ -35,11 +37,11 @@ export const createGame = async (name: string, user: string): Promise<Game> => {
 };
 
 export const addUser = async (gameId: string, userId: string): Promise<Game> => {
-    const game = (await GameModel.find({ _id: gameId }).limit(1))[0];
-    const playerUser = (await PlayerModel.find({ user: userId }).limit(1));
+    const game = (await getGameById(gameId))[0];
+    const playerUser: Player = (await getPlayerByUserId(userId))[0];
 
-    if (playerUser.length) {
-        const isPlayerInGame = game.players.filter(element => String(element._id) === String(playerUser[0]._id));
+    if (typeof playerUser !== 'undefined') {
+        const isPlayerInGame = game.players.filter(element => String(element._id) === String(playerUser._id));
         if (isPlayerInGame.length > 0) {
             return game;
         }
@@ -53,11 +55,16 @@ export const addUser = async (gameId: string, userId: string): Promise<Game> => 
             updated: new Date(),
         });
         game.players.push(player);
+
+        if (game.players.length === 2) {
+            game.status = Status.BUSY;
+        }
+
         await game.updateOne(game);
     }
     return game;
 }
 
 export const getGames = async () => {
-    return GameModel.find({}).populate('players').populate('rounds');
+    return await getGamesAll();
 }

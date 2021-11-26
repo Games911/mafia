@@ -17,15 +17,6 @@ export const seedData = async () => {
         updated: new Date(),
     });
 
-    const player2: Player = await PlayerModel.create({
-        number: 2,
-        status: Status.ACTIVE,
-        role: Roles.P,
-        user: '1223344444',
-        created: new Date(),
-        updated: new Date(),
-    });
-
     const round: Round = await RoundModel.create({
         number: 1,
         speaker: 1,
@@ -45,7 +36,7 @@ export const seedData = async () => {
 
     await GameModel.create({
         name: 'Game 2',
-        players: [player2],
+        players: [player1],
         rounds: [round],
         status: Status.ACTIVE,
         created: new Date(),

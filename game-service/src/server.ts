@@ -14,29 +14,30 @@ const io = new Server(httpServer, {
     }
 });
 
-const getUsers = (io, gameId) => {
+const getUsers = async (io, gameId) => {
     const rooms = io.of("/").adapter.rooms;
     return rooms.get(gameId);
-}
+};
+
+const sender = async (eventName, io, gameId, data) => {
+    const usersIds = await getUsers(io, gameId);
+    for (let user of usersIds) {
+        io.to(user).emit(eventName, data);
+    }
+};
 
 const sleep = (m) => {
     return new Promise(r => setTimeout(r, m));
-}
+};
 
 io.on("connection", (socket: Socket) => {
     socket.on("create-game", async (data) => {
         try {
             const game: Game = await createGame(data.name, data.user);
             socket.join(game._id);
-            const usersIds = getUsers(io, data.game);
-            for (let user of usersIds) {
-                io.to(user).emit('on-created-game', {game: game, status: 201});
-            }
+            await sender('on-created-game', io, data.game, {game: game, status: 201});
         } catch(error) {
-            const usersIds = getUsers(io, data.game);
-            for (let user of usersIds) {
-                io.to(user).emit('on-created-game', {error: error, status: 400});
-            }
+            await sender('on-created-game', io, data.game, {error: error, status: 400});
         }
     });
 
@@ -44,30 +45,27 @@ io.on("connection", (socket: Socket) => {
         try {
             const game: Game = await addUser(data.game, data.user);
             socket.join(data.game);
-            const usersIds = getUsers(io, data.game);
+            const usersIds = await getUsers(io, data.game);
             if (usersIds.size === +userCount) {
-                for (let user of usersIds) {
-                    io.to(user).emit('on-add-user', {game: game, status: 200});
-                }
+                await sender('on-add-user', io, data.game, {game: game, status: 200});
             } else {
-                for (let user of usersIds) {
-                    io.to(user).emit('on-add-user', {message: 'User count - ' + usersIds.size, status: 200});
-                }
+                await sender('on-add-user', io, data.game, {message: 'User count - ' + usersIds.size, status: 200});
             }
+            const games = await getGames();
+            io.local.emit("on-get-games", {games: games, status: 200});
+            const clients = io.of("/").sockets.size;
+            console.log(clients);
         } catch(error) {
-            const usersIds = getUsers(io, data.game);
-            for (let user of usersIds) {
-                io.to(user).emit('on-add-user', {error: error, status: 400});
-            }
+            await sender('on-add-user', io, data.game, {error: error, status: 400});
         }
     });
 
     socket.on("get-games", async (data) => {
         try {
             const games = await getGames();
-            socket.emit("on-get-games", {games: games, status: 200});
+            io.local.emit("on-get-games", {games: games, status: 200});
         } catch(error) {
-            socket.emit("on-get-games", {error: error, status: 400});
+            io.local.emit("on-get-games", {error: error, status: 400});
         }
     });
 
@@ -75,9 +73,9 @@ io.on("connection", (socket: Socket) => {
         try {
             await removeData();
             await seedData();
-            socket.emit("on-seed-data", {status: 200});
+            io.local.emit("on-seed-data", {status: 200});
         } catch(error) {
-            socket.emit("on-seed-data", {error: error, status: 400});
+            io.local.emit("on-seed-data", {error: error, status: 400});
         }
     });
 });

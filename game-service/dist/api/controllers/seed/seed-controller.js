@@ -24,14 +24,6 @@ const seedData = () => __awaiter(void 0, void 0, void 0, function* () {
         created: new Date(),
         updated: new Date(),
     });
-    const player2 = yield player_model_1.PlayerModel.create({
-        number: 2,
-        status: status_1.Status.ACTIVE,
-        role: roles_1.Roles.P,
-        user: '1223344444',
-        created: new Date(),
-        updated: new Date(),
-    });
     const round = yield round_model_1.RoundModel.create({
         number: 1,
         speaker: 1,
@@ -49,7 +41,7 @@ const seedData = () => __awaiter(void 0, void 0, void 0, function* () {
     });
     yield game_model_1.GameModel.create({
         name: 'Game 2',
-        players: [player2],
+        players: [player1],
         rounds: [round],
         status: status_1.Status.ACTIVE,
         created: new Date(),

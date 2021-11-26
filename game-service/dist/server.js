@@ -22,10 +22,16 @@ const io = new socket_io_1.Server(httpServer, {
         methods: ["GET", "POST"]
     }
 });
-const getUsers = (io, gameId) => {
+const getUsers = (io, gameId) => __awaiter(void 0, void 0, void 0, function* () {
     const rooms = io.of("/").adapter.rooms;
     return rooms.get(gameId);
-};
+});
+const sender = (eventName, io, gameId, data) => __awaiter(void 0, void 0, void 0, function* () {
+    const usersIds = yield getUsers(io, gameId);
+    for (let user of usersIds) {
+        io.to(user).emit(eventName, data);
+    }
+});
 const sleep = (m) => {
     return new Promise(r => setTimeout(r, m));
 };
@@ -34,58 +40,49 @@ io.on("connection", (socket) => {
         try {
             const game = yield (0, game_controller_1.createGame)(data.name, data.user);
             socket.join(game._id);
-            const usersIds = getUsers(io, data.game);
-            for (let user of usersIds) {
-                io.to(user).emit('on-created-game', { game: game, status: 201 });
-            }
+            yield sender('on-created-game', io, data.game, { game: game, status: 201 });
         }
         catch (error) {
-            const usersIds = getUsers(io, data.game);
-            for (let user of usersIds) {
-                io.to(user).emit('on-created-game', { error: error, status: 400 });
-            }
+            yield sender('on-created-game', io, data.game, { error: error, status: 400 });
         }
     }));
     socket.on("add-user", (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const game = yield (0, game_controller_1.addUser)(data.game, data.user);
             socket.join(data.game);
-            const usersIds = getUsers(io, data.game);
+            const usersIds = yield getUsers(io, data.game);
             if (usersIds.size === +settings_1.userCount) {
-                for (let user of usersIds) {
-                    io.to(user).emit('on-add-user', { game: game, status: 200 });
-                }
+                yield sender('on-add-user', io, data.game, { game: game, status: 200 });
             }
             else {
-                for (let user of usersIds) {
-                    io.to(user).emit('on-add-user', { message: 'User count - ' + usersIds.size, status: 200 });
-                }
+                yield sender('on-add-user', io, data.game, { message: 'User count - ' + usersIds.size, status: 200 });
             }
+            const games = yield (0, game_controller_1.getGames)();
+            io.local.emit("on-get-games", { games: games, status: 200 });
+            const clients = io.of("/").sockets.size;
+            console.log(clients);
         }
         catch (error) {
-            const usersIds = getUsers(io, data.game);
-            for (let user of usersIds) {
-                io.to(user).emit('on-add-user', { error: error, status: 400 });
-            }
+            yield sender('on-add-user', io, data.game, { error: error, status: 400 });
         }
     }));
     socket.on("get-games", (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const games = yield (0, game_controller_1.getGames)();
-            socket.emit("on-get-games", { games: games, status: 200 });
+            io.local.emit("on-get-games", { games: games, status: 200 });
         }
         catch (error) {
-            socket.emit("on-get-games", { error: error, status: 400 });
+            io.local.emit("on-get-games", { error: error, status: 400 });
         }
     }));
     socket.on("seed-data", (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             yield (0, seed_controller_1.removeData)();
             yield (0, seed_controller_1.seedData)();
-            socket.emit("on-seed-data", { status: 200 });
+            io.local.emit("on-seed-data", { status: 200 });
         }
         catch (error) {
-            socket.emit("on-seed-data", { error: error, status: 400 });
+            io.local.emit("on-seed-data", { error: error, status: 400 });
         }
     }));
 });

@@ -6,5 +6,6 @@ var Status;
     Status["NEW"] = "new";
     Status["ACTIVE"] = "active";
     Status["BLOCKED"] = "blocked";
+    Status["BUSY"] = "busy";
 })(Status = exports.Status || (exports.Status = {}));
 //# sourceMappingURL=status.js.map
