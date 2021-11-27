@@ -1,8 +1,7 @@
 import { GameModel } from '../../../database/models/game/game-model';
-import { Game } from '../../../database/interfaces/game/game';
 
-export const getGameById = async (id): Promise<Game>  => {
-    const game: Game = (await GameModel.find({ _id: id }).populate('players').populate('rounds').limit(1));
+export const getGameById = async (id)  => {
+    const game = (await GameModel.find({ _id: id }).populate('players').populate('rounds').limit(1));
     if (typeof game !== 'undefined') {
         return game;
     }

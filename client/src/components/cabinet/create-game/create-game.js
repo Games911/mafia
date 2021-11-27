@@ -1,9 +1,8 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import { Form, Button, Breadcrumb } from 'bootstrap-4-react';
 import * as types from "../../../redux/types/game/create-game-type";
 import {createGame, nameValidate} from "../../../redux/actions/game/create-game-action";
 import {useDispatch, useSelector} from "react-redux";
-import {getUserData} from "../../../redux/actions/auth/userInfoAction";
 import {Link, useHistory} from "react-router-dom";
 
 
@@ -11,7 +10,6 @@ const CreateGame = (props) => {
     const dispatch = useDispatch();
     let history = useHistory();
     const {
-        gameId,
         name,
         errorsName,
         changedName,
@@ -19,13 +17,6 @@ const CreateGame = (props) => {
     } = useSelector(state => state.createGameReducer);
     const { userId } = useSelector(state => state.userInfoReducer);
     const { token } = useSelector(state => state.token);
-
-    useEffect(() => {
-        dispatch(getUserData());
-        if (gameId !== null) {
-            history.push('/cabinet/game/' + gameId);
-        }
-    }, [userId, gameId]);
 
     const isValid = () => {
         if (changedName && errorsName.length === 0) {
@@ -36,7 +27,7 @@ const CreateGame = (props) => {
 
     const onSubmit = (event) => {
         event.preventDefault();
-        dispatch(createGame(name, userId, token, props.socket));
+        dispatch(createGame(name, userId, token, props.socket, history));
         dispatch({
             type: types.CREATE_GAME_RESET_FORM
         });

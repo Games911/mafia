@@ -1,5 +1,6 @@
 import {errorsResult, isRequire, maxLength, minLength, startValidation} from "../../helpers/Validation";
 import * as types from "../../types/game/create-game-type";
+import * as gameTypes from "../../types/game/game-type";
 
 
 export const nameValidate = (value) =>async dispatch=>{
@@ -20,23 +21,26 @@ export const nameValidate = (value) =>async dispatch=>{
     });
 };
 
-export const createGame = (name, userId, token, socket) =>async dispatch=>{
-    socket.emit('create-game', {token: token, name: name, user: userId});
+export const createGame = (name, userId, token, socket, history) =>async dispatch=>{
+    const socketId = localStorage.getItem('socketId');
+    socket.emit('create-game', {token: token, name: name, user: userId, socket: socketId});
     socket.on("on-created-game", (response) => {
         console.log(response);
         switch (response.status) {
             case 201:
-                const gameId = response.game._id;
-                localStorage.setItem('currentGameId', gameId);
+                const currentGame = response.game;
+                localStorage.setItem('currentGame', currentGame);
                 dispatch({
-                    type: types.CREATE_GAME_SET_ID,
-                    gameId: gameId,
+                    type: gameTypes.GAME_SET_CURRENT_GAME,
+                    currentGame: currentGame,
                 });
+                history.push('/cabinet/game/' + currentGame._id);
                 break;
             case 400:
+                const errorMessage = (response.error.code === 11000) ? 'Duplicate error' : response.error;
                 dispatch({
                     type: types.CREATE_GAME_API_ERROR,
-                    message: response.error,
+                    message: errorMessage,
                 });
                 break;
         }

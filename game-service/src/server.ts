@@ -35,9 +35,11 @@ io.on("connection", (socket: Socket) => {
         try {
             const game: Game = await createGame(data.name, data.user);
             socket.join(game._id);
-            await sender('on-created-game', io, data.game, {game: game, status: 201});
+            await sender('on-created-game', io, game._id, {game: game, status: 201});
+            const games = await getGames();
+            io.local.emit("on-get-games", {games: games, status: 200});
         } catch(error) {
-            await sender('on-created-game', io, data.game, {error: error, status: 400});
+            io.to(data.socket).emit('on-created-game', {error: error, status: 400});
         }
     });
 
@@ -49,12 +51,10 @@ io.on("connection", (socket: Socket) => {
             if (usersIds.size === +userCount) {
                 await sender('on-add-user', io, data.game, {game: game, status: 200});
             } else {
-                await sender('on-add-user', io, data.game, {message: 'User count - ' + usersIds.size, status: 200});
+                await sender('on-add-user', io, data.game, {game: game, status: 200});
             }
             const games = await getGames();
             io.local.emit("on-get-games", {games: games, status: 200});
-            const clients = io.of("/").sockets.size;
-            console.log(clients);
         } catch(error) {
             await sender('on-add-user', io, data.game, {error: error, status: 400});
         }

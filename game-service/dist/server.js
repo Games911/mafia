@@ -40,10 +40,12 @@ io.on("connection", (socket) => {
         try {
             const game = yield (0, game_controller_1.createGame)(data.name, data.user);
             socket.join(game._id);
-            yield sender('on-created-game', io, data.game, { game: game, status: 201 });
+            yield sender('on-created-game', io, game._id, { game: game, status: 201 });
+            const games = yield (0, game_controller_1.getGames)();
+            io.local.emit("on-get-games", { games: games, status: 200 });
         }
         catch (error) {
-            yield sender('on-created-game', io, data.game, { error: error, status: 400 });
+            io.to(data.socket).emit('on-created-game', { error: error, status: 400 });
         }
     }));
     socket.on("add-user", (data) => __awaiter(void 0, void 0, void 0, function* () {
@@ -55,12 +57,10 @@ io.on("connection", (socket) => {
                 yield sender('on-add-user', io, data.game, { game: game, status: 200 });
             }
             else {
-                yield sender('on-add-user', io, data.game, { message: 'User count - ' + usersIds.size, status: 200 });
+                yield sender('on-add-user', io, data.game, { game: game, status: 200 });
             }
             const games = yield (0, game_controller_1.getGames)();
             io.local.emit("on-get-games", { games: games, status: 200 });
-            const clients = io.of("/").sockets.size;
-            console.log(clients);
         }
         catch (error) {
             yield sender('on-add-user', io, data.game, { error: error, status: 400 });

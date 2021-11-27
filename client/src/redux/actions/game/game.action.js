@@ -1,5 +1,6 @@
 import * as types from "../../types/game/game-type";
 
+
 export const getGames = (socket, perPage) => async dispatch => {
     socket.emit('get-games');
     socket.on("on-get-games", (response) => {
@@ -27,13 +28,18 @@ export const getGames = (socket, perPage) => async dispatch => {
     });
 }
 
-export const addUser = (gameId, userId, socket) => async dispatch => {
+export const addUser = (gameId, userId, socket, history) => async dispatch => {
     socket.emit('add-user', {game: gameId, user: userId});
     socket.on("on-add-user", (response) => {
-        console.log(response);
+        const currentGame = response.game;
         switch (response.status) {
             case 200:
-
+                localStorage.setItem('currentGame', currentGame);
+                dispatch({
+                    type: types.GAME_SET_CURRENT_GAME,
+                    currentGame: currentGame,
+                });
+                history.push('/cabinet/game/' + currentGame._id);
                 break;
             case 400:
                 console.log(response.error);

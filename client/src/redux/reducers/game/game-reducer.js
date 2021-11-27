@@ -5,6 +5,7 @@ const initialState = {
     visibleGames: [],
     step: 0,
     perPage: 10,
+    currentGame: null,
 };
 
 export const gameReducer = (state = initialState, action) => {
@@ -23,6 +24,11 @@ export const gameReducer = (state = initialState, action) => {
             return {
                 ...state,
                 step: action.step,
+            };
+        case types.GAME_SET_CURRENT_GAME:
+            return {
+                ...state,
+                currentGame: action.currentGame,
             };
         default:
             return state;

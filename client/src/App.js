@@ -16,7 +16,7 @@ import Game from "./components/cabinet/game/game";
 
 const socket = io("http://localhost:8888");
 socket.on("connect", () => {
-    console.log(socket.id);
+    localStorage.setItem('socketId', socket.id);
 });
 
 function App() {

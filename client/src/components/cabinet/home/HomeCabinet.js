@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import './HomeCabinet.css';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getGames, seedDataAction, addUser } from '../../../redux/actions/game/game.action';
 import { Card, Button } from 'bootstrap-4-react';
@@ -8,6 +8,7 @@ import * as types from '../../../redux/types/game/game-type';
 
 const HomeCabinet = (props) => {
     const dispatch = useDispatch();
+    let history = useHistory();
     const { games, visibleGames, step, perPage } = useSelector(state => state.gameReducer);
     const { userId } = useSelector(state => state.userInfoReducer);
 
@@ -30,8 +31,8 @@ const HomeCabinet = (props) => {
         dispatch(seedDataAction(props.socket));
     }
 
-    const addUserToRoom = (gameId) => {
-        dispatch(addUser(gameId, userId, props.socket));
+    const addUserToGame = (gameId) => {
+        dispatch(addUser(gameId, userId, props.socket, history));
     };
 
     return (
@@ -43,7 +44,7 @@ const HomeCabinet = (props) => {
             {visibleGames && visibleGames.length > 0 ? (
                 <div className="games-list-block">
                     {visibleGames.map(item => (
-                        <div className={item.players.length === 2 ? 'games-list-disabled' : 'games-list-active'} key={item._id} onClick={() => addUserToRoom(item._id)}>
+                        <div className={item.players.length === 2 ? 'games-list-disabled' : 'games-list-active'} key={item._id} onClick={() => addUserToGame(item._id)}>
                             <Card text="center">
                                 <Card.Header>{item.status}</Card.Header>
                                 <Card.Body>
