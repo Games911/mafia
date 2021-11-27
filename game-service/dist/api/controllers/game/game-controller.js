@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getGames = exports.addUser = exports.createGame = void 0;
+exports.getGames = exports.getGame = exports.addUser = exports.createGame = void 0;
 const player_model_1 = require("../../../database/models/game/player-model");
 const roles_1 = require("../../../database/enums/roles");
 const status_1 = require("../../../database/enums/status");
@@ -54,7 +54,7 @@ const addUser = (gameId, userId) => __awaiter(void 0, void 0, void 0, function* 
     }
     else {
         const player = yield player_model_1.PlayerModel.create({
-            number: 1,
+            number: game.players.length + 1,
             user: userId,
             role: roles_1.Roles.P,
             status: status_1.Status.ACTIVE,
@@ -70,6 +70,10 @@ const addUser = (gameId, userId) => __awaiter(void 0, void 0, void 0, function* 
     return game;
 });
 exports.addUser = addUser;
+const getGame = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    return (yield (0, game_repository_1.getGameById)(id))[0];
+});
+exports.getGame = getGame;
 const getGames = () => __awaiter(void 0, void 0, void 0, function* () {
     return yield (0, game_repository_1.getGamesAll)();
 });

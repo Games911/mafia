@@ -1,0 +1,29 @@
+.players {
+    display: flex;
+    justify-content: space-between;
+}
+
+.player {
+    height: 120px;
+    width: 120px;
+    border: 2px solid #6d4f9b;
+}
+.player.inactive {
+    border: 2px solid #c0b9c0;
+}
+
+.number {
+    text-align: center;
+    font-size: 70px;
+    font-weight: bold;
+    color: #6d4f9b;
+}
+.number.inactive {
+    color: #c0b9c0;
+}
+
+.table {
+    margin-top: 50px;
+    border: 2px solid #6d4f9b;
+    height: 300px;
+}

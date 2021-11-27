@@ -3,7 +3,7 @@ import { Server, Socket } from 'socket.io';
 import { port, userCount }  from './config/settings';
 import { connect } from './config/dbConnect';
 import { Game } from './database/interfaces/game/game';
-import { addUser, createGame, getGames } from './api/controllers/game/game-controller';
+import {addUser, createGame, getGame, getGames} from './api/controllers/game/game-controller';
 import { seedData, removeData } from './api/controllers/seed/seed-controller';
 
 const httpServer = createServer();
@@ -66,6 +66,15 @@ io.on("connection", (socket: Socket) => {
             io.local.emit("on-get-games", {games: games, status: 200});
         } catch(error) {
             io.local.emit("on-get-games", {error: error, status: 400});
+        }
+    });
+
+    socket.on("game-initialize", async (data) => {
+        try {
+            const game = await getGame(data.game);
+            io.local.emit("on-game-initialize", {game: game, status: 200});
+        } catch(error) {
+            io.local.emit("on-game-initialize", {error: error, status: 400});
         }
     });
 

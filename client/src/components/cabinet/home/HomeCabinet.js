@@ -44,7 +44,7 @@ const HomeCabinet = (props) => {
             {visibleGames && visibleGames.length > 0 ? (
                 <div className="games-list-block">
                     {visibleGames.map(item => (
-                        <div className={item.players.length === 2 ? 'games-list-disabled' : 'games-list-active'} key={item._id} onClick={() => addUserToGame(item._id)}>
+                        <div className={item.players.length === props.countUser ? 'games-list-disabled' : 'games-list-active'} key={item._id} onClick={() => addUserToGame(item._id)}>
                             <Card text="center">
                                 <Card.Header>{item.status}</Card.Header>
                                 <Card.Body>

@@ -47,7 +47,7 @@ export const addUser = async (gameId: string, userId: string): Promise<Game> => 
         }
     } else {
         const player: Player = await PlayerModel.create({
-            number: 1,
+            number: game.players.length + 1,
             user: userId,
             role: Roles.P,
             status: Status.ACTIVE,
@@ -64,6 +64,11 @@ export const addUser = async (gameId: string, userId: string): Promise<Game> => 
     }
     return game;
 }
+
+export const getGame = async (id: string) => {
+    return (await getGameById(id))[0];
+}
+
 
 export const getGames = async () => {
     return await getGamesAll();

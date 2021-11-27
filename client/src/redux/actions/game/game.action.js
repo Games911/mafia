@@ -48,6 +48,34 @@ export const addUser = (gameId, userId, socket, history) => async dispatch => {
     });
 }
 
+export const gameInitialize = (socket, id, countUser) => async dispatch => {
+    socket.emit('game-initialize', {game: id});
+    socket.on("on-game-initialize", (response) => {
+        const currentGame = response.game;
+        const count = 3;
+        if (currentGame.players.length === count) {
+            console.log('Start');
+        } else {
+            const startPos = currentGame.players.length + 1;
+            for (let i = startPos; i < count + 1; i++) {
+                currentGame.players.push({number: i});
+            }
+        }
+        console.log(currentGame);
+        switch (response.status) {
+            case 200:
+                dispatch({
+                    type: types.GAME_SET_CURRENT_GAME,
+                    currentGame: currentGame,
+                });
+                break;
+            case 400:
+                console.log(response.error);
+                break;
+        }
+    });
+}
+
 export const seedDataAction = (socket) => async dispatch => {
     socket.emit('seed-data');
     socket.on("on-seed-data", (response) => {

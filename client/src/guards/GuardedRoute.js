@@ -3,12 +3,12 @@ import { Route } from "react-router-dom";
 import NotAllowed from "../components/home/NotAllowed";
 
 
-const GuardedRoute = ({ component: Component, auth, socket }) => {
+const GuardedRoute = ({ component: Component, auth, socket, countUser }) => {
 
     return (
         <Route render={() => (
             auth !== null
-                ? <Component socket={socket}/>
+                ? <Component socket={socket} countUser={countUser}/>
                 : <NotAllowed />
                 )
         }/>

@@ -75,6 +75,15 @@ io.on("connection", (socket) => {
             io.local.emit("on-get-games", { error: error, status: 400 });
         }
     }));
+    socket.on("game-initialize", (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const game = yield (0, game_controller_1.getGame)(data.game);
+            io.local.emit("on-game-initialize", { game: game, status: 200 });
+        }
+        catch (error) {
+            io.local.emit("on-game-initialize", { error: error, status: 400 });
+        }
+    }));
     socket.on("seed-data", (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             yield (0, seed_controller_1.removeData)();
