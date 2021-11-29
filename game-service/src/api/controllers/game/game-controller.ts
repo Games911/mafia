@@ -7,7 +7,7 @@ import { GameModel } from '../../../database/models/game/game-model';
 import { Round } from '../../../database/interfaces/game/round';
 import { RoundModel } from '../../../database/models/game/round-model';
 import { getGameById, getGamesAll } from '../../repositories/game/game-repository';
-import { getPlayerByUserId } from '../../repositories/game/player-repositiry';
+import { getPlayerByUserId } from '../../repositories/game/player-repository';
 
 
 export const createGame = async (name: string, user: string): Promise<Game> => {

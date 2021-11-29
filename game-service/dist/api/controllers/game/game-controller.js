@@ -16,7 +16,7 @@ const status_1 = require("../../../database/enums/status");
 const game_model_1 = require("../../../database/models/game/game-model");
 const round_model_1 = require("../../../database/models/game/round-model");
 const game_repository_1 = require("../../repositories/game/game-repository");
-const player_repositiry_1 = require("../../repositories/game/player-repositiry");
+const player_repository_1 = require("../../repositories/game/player-repository");
 const createGame = (name, user) => __awaiter(void 0, void 0, void 0, function* () {
     const player = yield player_model_1.PlayerModel.create({
         number: 1,
@@ -45,7 +45,7 @@ const createGame = (name, user) => __awaiter(void 0, void 0, void 0, function* (
 exports.createGame = createGame;
 const addUser = (gameId, userId) => __awaiter(void 0, void 0, void 0, function* () {
     const game = (yield (0, game_repository_1.getGameById)(gameId))[0];
-    const playerUser = (yield (0, player_repositiry_1.getPlayerByUserId)(userId))[0];
+    const playerUser = (yield (0, player_repository_1.getPlayerByUserId)(userId))[0];
     if (typeof playerUser !== 'undefined') {
         const isPlayerInGame = game.players.filter(element => String(element._id) === String(playerUser._id));
         if (isPlayerInGame.length > 0) {

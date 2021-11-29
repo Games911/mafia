@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react';
 import './game.css';
-import {Breadcrumb, Card} from 'bootstrap-4-react';
+import { Breadcrumb } from 'bootstrap-4-react';
 import { Link } from 'react-router-dom';
 import { gameInitialize } from '../../../redux/actions/game/game.action';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import * as messageTypes from '../../../redux/types/message/message-type';
+import Message from './message/message';
+import Player from './player/player';
 
 const Game = (props) => {
     const dispatch = useDispatch();
@@ -14,8 +17,20 @@ const Game = (props) => {
         dispatch(gameInitialize(props.socket, currentLocation.slice(-1)[0]), props.countUser);
     },[]);
 
+    props.socket.on("on-game-process", (response) => {
+        console.log(response);
+        const game = response.game;
+        if (response.message) {
+            dispatch({
+                type: messageTypes.MESSAGE_SET,
+                message: response.message,
+            });
+        }
+    });
+
     return (
         <div className="game">
+            <Message />
             <div className="navigation">
                 <nav aria-label="breadcrumb">
                     <Breadcrumb>
@@ -27,8 +42,8 @@ const Game = (props) => {
             {currentGame && currentGame.players.length > 0 ? (
                 <div className="players">
                     {currentGame.players.map(item => (
-                        <div className={item._id ? 'player' : 'player inactive'} key={item.number}>
-                            <div className={item._id ? 'number' : 'number inactive'}>{item.number}</div>
+                        <div key={item.number}>
+                            <Player item={item}/>
                         </div>
                     ))}
                 </div>

@@ -52,7 +52,7 @@ export const gameInitialize = (socket, id, countUser) => async dispatch => {
     socket.emit('game-initialize', {game: id});
     socket.on("on-game-initialize", (response) => {
         const currentGame = response.game;
-        const count = 3;
+        const count = 2;
         if (currentGame.players.length === count) {
             console.log('Start');
         } else {

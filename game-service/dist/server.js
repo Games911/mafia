@@ -14,6 +14,7 @@ const socket_io_1 = require("socket.io");
 const settings_1 = require("./config/settings");
 const dbConnect_1 = require("./config/dbConnect");
 const game_controller_1 = require("./api/controllers/game/game-controller");
+const round_controller_1 = require("./api/controllers/round/round-controller");
 const seed_controller_1 = require("./api/controllers/seed/seed-controller");
 const httpServer = (0, http_1.createServer)();
 const io = new socket_io_1.Server(httpServer, {
@@ -50,11 +51,20 @@ io.on("connection", (socket) => {
     }));
     socket.on("add-user", (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const game = yield (0, game_controller_1.addUser)(data.game, data.user);
+            let game = null;
+            game = yield (0, game_controller_1.addUser)(data.game, data.user);
             socket.join(data.game);
             const usersIds = yield getUsers(io, data.game);
             if (usersIds.size === +settings_1.userCount) {
                 yield sender('on-add-user', io, data.game, { game: game, status: 200 });
+                // Process
+                yield sender('on-game-process', io, data.game, { game: game, status: 200, message: 'Start game' });
+                yield sleep(7000);
+                yield sender('on-game-process', io, data.game, { game: game, status: 200, message: 'Round 1. 1 player talks!' });
+                game = yield (0, round_controller_1.increaseSpeaker)(data.game);
+                yield sleep(7000);
+                yield sender('on-game-process', io, data.game, { game: game, status: 200, message: 'Round 1. 2 player talks!' });
+                // Process
             }
             else {
                 yield sender('on-add-user', io, data.game, { game: game, status: 200 });

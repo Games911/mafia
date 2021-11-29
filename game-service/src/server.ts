@@ -3,7 +3,8 @@ import { Server, Socket } from 'socket.io';
 import { port, userCount }  from './config/settings';
 import { connect } from './config/dbConnect';
 import { Game } from './database/interfaces/game/game';
-import {addUser, createGame, getGame, getGames} from './api/controllers/game/game-controller';
+import { addUser, createGame, getGame, getGames } from './api/controllers/game/game-controller';
+import { increaseSpeaker } from './api/controllers/round/round-controller';
 import { seedData, removeData } from './api/controllers/seed/seed-controller';
 
 const httpServer = createServer();
@@ -45,11 +46,23 @@ io.on("connection", (socket: Socket) => {
 
     socket.on("add-user", async (data) => {
         try {
-            const game: Game = await addUser(data.game, data.user);
+            let game: Game = null;
+            game = await addUser(data.game, data.user);
             socket.join(data.game);
             const usersIds = await getUsers(io, data.game);
             if (usersIds.size === +userCount) {
                 await sender('on-add-user', io, data.game, {game: game, status: 200});
+
+                // Process
+                await sender('on-game-process', io, data.game, {game: game, status: 200, message: 'Start game'});
+                await sleep(7000);
+
+                await sender('on-game-process', io, data.game, {game: game, status: 200, message: 'Round 1. 1 player talks!'});
+                game = await increaseSpeaker(data.game);
+                await sleep(7000);
+                await sender('on-game-process', io, data.game, {game: game, status: 200, message: 'Round 1. 2 player talks!'});
+                // Process
+
             } else {
                 await sender('on-add-user', io, data.game, {game: game, status: 200});
             }

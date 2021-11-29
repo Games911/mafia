@@ -20,7 +20,7 @@ socket.on("connect", () => {
 
 function App() {
     const dispatch = useDispatch();
-    const countUser = 3;
+    const countUser = 2;
     const { token } = useSelector(state => state.token);
     useEffect(() => {
         dispatch(getToken());
